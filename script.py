@@ -5,29 +5,29 @@ import requests
 from datetime import date
 
 
-# === ESA APIを使って今週の週報を投稿したユーザー一覧を取得 ===
+# === ESA API を使って今週の週報を投稿したユーザー一覧を取得 ===
 def get_posted_users(team: str, folder: str, headers: dict):
     posted = set() # 投稿済みユーザーのスクリーンネームを格納するセット
     page = 1
     while True:
-        url = f"https://api.esa.io/v1/teams/{team}/posts" # 投稿一覧を取得するesa APIのエンドポイント
+        url = f"https://api.esa.io/v1/teams/{team}/posts" # 投稿一覧を取得する esa API のエンドポイント
         params = {
             "q": f"dir:{folder}", # 検索クエリ：指定フォルダ内の投稿を取得
             "per_page": 20, # 1ページあたりの取得件数
             "page": page # 取得するページ番号
         } # クエリパラメータ
-        res = requests.get(url, headers=headers, params=params) # esa APIにGETリクエストを送信
+        res = requests.get(url, headers=headers, params=params) # esa API に GET リクエストを送信
         res.raise_for_status()
         data = res.json()
         posts = data.get("posts", []) # 記事の一覧を取得
         if not posts:
             break
-        posted.update(p["created_by"]["screen_name"] for p in posts) # 投稿者のスクリーンネームをセットに追加
+        posted.update(p["created_by"]["screen_name"] for p in posts if p["wip"] == False) # 投稿者のスクリーンネームをセットに追加
         page += 1
     return posted
 
 
-# === DiscordのWebhookを使って未投稿ユーザーに通知 ===
+# === Discord の Webhook を使って未投稿ユーザーに通知 ===
 def notify_discord(not_posted_members, user_map, webhook_url):
     mentions = [user_map[u] for u in not_posted_members if u in user_map] # スクリーンネームをメンション形式に変換
     if not mentions:
@@ -35,7 +35,7 @@ def notify_discord(not_posted_members, user_map, webhook_url):
     else:
         content = "以下のメンバーはまだ週報を記入していません\n" + "\n".join(mentions)
 
-    res = requests.post(webhook_url, json={"content": content}) # DiscordのWebhookにPOSTリクエストを送信
+    res = requests.post(webhook_url, json={"content": content}) # Discord の Webhook に POST リクエストを送信
     res.raise_for_status()
 
 
