@@ -1,0 +1,37 @@
+name: Weekly Report Reminder
+
+on: 
+  # 毎週金曜日10:45（UTC+9 = 日本時間）に実行
+  schedule:
+    - cron: 45 1 * * 5
+  # GitHub Actions の画面から手動でも実行可能にする
+  workflow_dispatch:
+
+jobs:
+  Run-Script: # ジョブ名
+    runs-on: ubuntu-latest # 実行環境
+    
+    steps:
+      # リポジトリのコードを取得
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Python をセットアップ
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with: 
+          python-version: "3.x"
+
+      # requirements.txt 内にある依存パッケージをインストール
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Python スクリプトを実行
+      - name: Run script
+        # GitHub Secrets に登録した値を OS 環境変数 として Python に渡す
+        env: 
+          ESA_TOKEN: ${{ secrets.ESA_TOKEN }}
+          ESA_TEAM: ${{ secrets.ESA_TEAM }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          USERMAP_JSON: ${{ secrets.USER_MAP_JSON }}
+        run: python script.py
