@@ -33,5 +33,5 @@ jobs:
           ESA_TOKEN: ${{ secrets.ESA_TOKEN }}
           ESA_TEAM: ${{ secrets.ESA_TEAM }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          USERMAP_JSON: ${{ secrets.USER_MAP_JSON }}
+          USER_MAP_JSON: ${{ secrets.USER_MAP_JSON }}
         run: python script.py
