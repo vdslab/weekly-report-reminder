@@ -3,7 +3,7 @@ name: Weekly Report Reminder
 on: 
   # 毎週金曜日10:45（UTC+9 = 日本時間）に実行
   schedule:
-    - cron: 45 1 * * 5
+    - cron: 45 0 * * 5
   # GitHub Actions の画面から手動でも実行可能にする
   workflow_dispatch:
 
