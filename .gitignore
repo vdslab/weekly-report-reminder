@@ -1,3 +1,4 @@
 .env
 user_map.json
+user_map_test.json
 script_test.py
